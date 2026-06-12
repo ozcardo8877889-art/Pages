@@ -535,29 +535,9 @@ async function uploadImageToSupabase(file) {
             throw new Error('Supabase no está conectado');
         }
 
-        // Verificar que el bucket existe (ya debería estar creado manualmente)
-        try {
-            const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-
-            if (listError) {
-                console.warn('Error listando buckets:', listError);
-            }
-
-            const bucketExists = buckets && buckets.some(b => b.name === 'imagenes');
-
-            if (!bucketExists) {
-                throw new Error(
-                    'El bucket "imagenes" no existe en Supabase Storage. ' +
-                    'Por favor créalo manualmente: Dashboard → Storage → New Bucket → ' +
-                    'Nombre: "imagenes" → Public → Create Bucket.'
-                );
-            }
-
-            console.log('✅ Bucket imagenes encontrado');
-        } catch(e) {
-            console.error('Bucket error:', e);
-            throw e;
-        }
+        // El bucket "imagenes" debe existir en Supabase Storage
+        // Si no existe, créalo manualmente: Dashboard → Storage → New Bucket → imagenes → Public
+        console.log('Intentando subir a bucket: imagenes');
 
         const timestamp = Date.now();
         const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
