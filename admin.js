@@ -7,8 +7,8 @@
 const SUPABASE_URL = 'https://doqsslnewxamtpifszom.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_fZ5I8x0Dyz_X8w-FZa-g7Q_ONnTBbPZ';
 
-// 🧠 ADMIN AI ASSISTANT - Configuración
-const COHERE_API_KEY = ''; // 🔑 PONER API KEY DE COHERE AQUÍ - Obtén gratis en: https://cohere.com;
+// 🧠 COHERE AI - Configuración para Admin Assistant
+// 🔑 PON TU API KEY DE COHERE AQUÍ: const COHERE_API_KEY = 'tu-api-key-aqui';
 
 let supabase = null;
 let currentAdmin = null;
@@ -403,7 +403,7 @@ function renderProductsTable() {
 
     tbody.innerHTML = allProductos.map(p => `
         <tr>
-            <td>${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" class="table-img">` : `<div class="table-img" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--color-dark-light)">${{figuras:'🎎',manga:'📚',merch:'👕',cosplay:'👘'}[p.categoria] || '📦'}</div>`}</td>
+            <td><img src="${p.imagen || 'imagen1.jpg'}" alt="${p.nombre}" class="table-img"></td>
             <td><strong>${p.nombre}</strong></td>
             <td><span class="status-badge status-${p.categoria}">${p.categoria.toUpperCase()}</span></td>
             <td><strong style="color:var(--color-secondary)">S/${p.precio?.toFixed(2) || '0.00'}</strong></td>
@@ -441,7 +441,7 @@ function renderFilteredProducts(productos) {
     }
     tbody.innerHTML = productos.map(p => `
         <tr>
-            <td>${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" class="table-img">` : `<div class="table-img" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--color-dark-light)">${{figuras:'🎎',manga:'📚',merch:'👕',cosplay:'👘'}[p.categoria] || '📦'}</div>`}</td>
+            <td><img src="${p.imagen || 'imagen1.jpg'}" alt="${p.nombre}" class="table-img"></td>
             <td><strong>${p.nombre}</strong></td>
             <td><span class="status-badge status-${p.categoria}">${p.categoria.toUpperCase()}</span></td>
             <td><strong style="color:var(--color-secondary)">S/${p.precio?.toFixed(2)}</strong></td>
@@ -1327,15 +1327,11 @@ function showToast(type, title, message) {
 // DATOS DE DEMO
 // ============================
 function getDemoProducts() {
-    // 🖼️ IMÁGENES: Configura URLs de Supabase Storage o URLs externas
-    // Ejemplo: 'https://tu-proyecto.supabase.co/storage/v1/object/public/productos/goku.jpg'
-    const IMG_PLACEHOLDER = null; // null = emoji placeholder automático
-
     return [
-        { id: 1, nombre: 'Figura Goku Ultra Instinct', categoria: 'figuras', descripcion: 'Figura de colección de 30cm', precio: 149.90, stock: 5, imagen: IMG_PLACEHOLDER, destacado: true, created_at: '2024-01-15' },
-        { id: 2, nombre: 'Manga Attack on Titan Vol.1', categoria: 'manga', descripcion: 'Edición en español, tapa dura', precio: 29.90, stock: 20, imagen: IMG_PLACEHOLDER, destacado: true, created_at: '2024-01-14' },
-        { id: 3, nombre: 'Hoodie Naruto Akatsuki', categoria: 'merch', descripcion: 'Polera con capucha estilo Akatsuki', precio: 89.90, stock: 15, imagen: IMG_PLACEHOLDER, destacado: false, created_at: '2024-01-13' },
-        { id: 4, nombre: 'Cosplay Demon Slayer', categoria: 'cosplay', descripcion: 'Traje completo incluyendo espada', precio: 199.90, stock: 3, imagen: IMG_PLACEHOLDER, destacado: true, created_at: '2024-01-12' },
+        { id: 1, nombre: 'Figura Goku Ultra Instinct', categoria: 'figuras', descripcion: 'Figura de colección de 30cm', precio: 149.90, stock: 5, imagen: 'imagen1.jpg', destacado: true, created_at: '2024-01-15' },
+        { id: 2, nombre: 'Manga Attack on Titan Vol.1', categoria: 'manga', descripcion: 'Edición en español, tapa dura', precio: 29.90, stock: 20, imagen: 'imagen2.jpg', destacado: true, created_at: '2024-01-14' },
+        { id: 3, nombre: 'Hoodie Naruto Akatsuki', categoria: 'merch', descripcion: 'Polera con capucha estilo Akatsuki', precio: 89.90, stock: 15, imagen: 'imagen3.jpg', destacado: false, created_at: '2024-01-13' },
+        { id: 4, nombre: 'Cosplay Demon Slayer', categoria: 'cosplay', descripcion: 'Traje completo incluyendo espada', precio: 199.90, stock: 3, imagen: 'imagen4.jpg', destacado: true, created_at: '2024-01-12' },
     ];
 }
 
