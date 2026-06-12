@@ -535,21 +535,28 @@ async function uploadImageToSupabase(file) {
             throw new Error('Supabase no está conectado');
         }
 
-        // Verificar/crear bucket
+        // Verificar que el bucket existe (ya debería estar creado manualmente)
         try {
-            const { data: buckets } = await supabase.storage.listBuckets();
+            const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+
+            if (listError) {
+                console.warn('Error listando buckets:', listError);
+            }
+
             const bucketExists = buckets && buckets.some(b => b.name === 'imagenes');
 
             if (!bucketExists) {
-                showToast('info', 'Creando bucket...', 'Creando bucket de imágenes');
-                await supabase.storage.createBucket('imagenes', {
-                    public: true,
-                    fileSizeLimit: 5242880
-                });
-                await new Promise(r => setTimeout(r, 1000));
+                throw new Error(
+                    'El bucket "imagenes" no existe en Supabase Storage. ' +
+                    'Por favor créalo manualmente: Dashboard → Storage → New Bucket → ' +
+                    'Nombre: "imagenes" → Public → Create Bucket.'
+                );
             }
+
+            console.log('✅ Bucket imagenes encontrado');
         } catch(e) {
-            console.log('Bucket check:', e);
+            console.error('Bucket error:', e);
+            throw e;
         }
 
         const timestamp = Date.now();
