@@ -367,7 +367,7 @@ window.openProductModal = function(productId) {
                 <form id="orderForm" onsubmit="handleOrderSubmit(event, ${p.id})">
                     <div class="form-row">
                         <div class="form-group"><label>Nombre</label><input type="text" name="cliente_nombre" required placeholder="Tu nombre"></div>
-                        <div class="form-group"><label>Teléfono</label><input type="tel" name="cliente_telefono" required placeholder="+51 999 999 999"></div>
+                        <div class="form-group"><label>Teléfono</label><input type="tel" name="cliente_telefono" required placeholder="+591 75107841"></div>
                     </div>
                     <div class="form-group"><label>Email</label><input type="email" name="cliente_email" placeholder="tu@email.com"></div>
                     <div class="form-row">
@@ -591,7 +591,7 @@ SERVICIOS:
 • Envíos: Lima metropolitana S/10-15 (delivery mismo día zona centro), provincias por Olva Courier 2-3 días hábiles
 • Pagos: Yape, Plin, transferencia bancaria, efectivo contra entrega
 • Horario tienda: Lun-Sab 10am-8pm | WhatsApp 24/7
-• WhatsApp: +51 999 999 999
+• WhatsApp: +591 75107841
 • Ubicación: Av. Otaku #123, Lima
 • Oferta activa: 20% OFF en figuras con código OTAKU20
 • Redes: @adonosekai (Instagram, Facebook, TikTok)
@@ -896,7 +896,7 @@ function getSmartResponse(text) {
         horarios: [
             '🕐 Horario tienda física: Lunes a Sábado 10am - 8pm. WhatsApp disponible 24/7 para consultas.',
             '⏰ Estamos abiertos ahora si es horario comercial. Pero puedes escribirnos por WhatsApp a cualquier hora y respondemos ASAP.',
-            '📱 WhatsApp: +51 999 999 999. Respondemos incluso en horario nocturno para urgencias. ¿Te gustaría escribirnos?'
+            '📱 WhatsApp: +591 75107841. Respondemos incluso en horario nocturno para urgencias. ¿Te gustaría escribirnos?'
         ],
         ubicacion: [
             '📍 Estamos en Av. Otaku #123, Lima, Perú. Cerca del centro comercial. ¿Quieres ver la ubicación exacta en Google Maps?',
@@ -920,7 +920,7 @@ function getSmartResponse(text) {
         ],
         ayuda: [
             '🆘 ¿Problema? Escríbenos por WhatsApp para respuesta inmediata, o deja una consulta en el formulario de contacto.',
-            '🔧 Para soporte técnico rápido: WhatsApp +51 999 999 999. Respondemos en minutos.',
+            '🔧 Para soporte técnico rápido: WhatsApp +591 75107841. Respondemos en minutos.',
             '💡 También puedes revisar nuestra sección de contacto. ¿Te llevo allí?'
         ],
         redes: [
@@ -1038,7 +1038,7 @@ window.handleChatAction = function(actionKey) {
             showPromoModal();
             break;
         case 'contactar':
-            window.open('https://wa.me/51999999999', '_blank');
+            window.open('https://wa.me/59175107841', '_blank');
             break;
         case 'hacer_pedido':
             closeChat();
@@ -1265,7 +1265,7 @@ window.handleProcessStep = function(stepNumber) {
             showStepModal('📱 Contacto', 'fa-comment-dots', 
                 '¡Primer paso! Escríbenos por WhatsApp para una respuesta inmediata, usa nuestro chat con IA, o deja una consulta en el formulario.',
                 [
-                    { label: '📱 WhatsApp', action: 'window.open("https://wa.me/51999999999", "_blank")' },
+                    { label: '📱 WhatsApp', action: 'window.open("https://wa.me/59175107841", "_blank")' },
                     { label: '💬 Chat IA', action: 'toggleChat(); closeStepModal();' },
                     { label: '📝 Formulario', action: 'document.getElementById("contacto").scrollIntoView({behavior:"smooth"}); closeStepModal();' }
                 ]
@@ -1299,7 +1299,7 @@ window.handleProcessStep = function(stepNumber) {
                 '¡Cuarto paso! Hacemos delivery en Lima metropolitana (S/10-15) y envíos a provincias por Olva Courier. Tracking incluido.',
                 [
                     { label: '🗺️ Ver Mapa', action: 'window.open("https://maps.google.com", "_blank"); closeStepModal();' },
-                    { label: '📱 Contactar', action: 'window.open("https://wa.me/51999999999", "_blank"); closeStepModal();' },
+                    { label: '📱 Contactar', action: 'window.open("https://wa.me/59175107841", "_blank"); closeStepModal();' },
                     { label: '💰 Ver Precios', action: 'document.getElementById("productos").scrollIntoView({behavior:"smooth"}); closeStepModal();' }
                 ]
             );
