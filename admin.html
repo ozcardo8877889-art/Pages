@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Ado no Sekai</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="admin-ai.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="admin-body">
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <span class="logo-icon">⚔️</span>
+                <span class="logo-text">Ado no Sekai</span>
+            </div>
+            <h2>Panel de Administración</h2>
+            <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Usuario</label>
+                    <input type="text" id="loginUser" name="username" required placeholder="admin" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPass" name="password" required placeholder="••••••" autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="passIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="fas fa-sign-in-alt"></i> Ingresar
+                </button>
+            </form>
+
+            <div class="login-hint">
+                <p><i class="fas fa-info-circle"></i> Usuario por defecto: <strong>admin</strong> / <strong>admin123</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN ADMIN (hidden until login) -->
+    <div id="adminMain" class="admin-wrapper" style="display:none">
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="logo-icon">⚔️</span>
+                    <span class="logo-text">Ado no Sekai</span>
+                </div>
+                <p class="sidebar-subtitle">Panel de Administración</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="sidebar-link active" data-tab="dashboard">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </button>
+                <button class="sidebar-link" data-tab="productos">
+                    <i class="fas fa-box"></i> Productos
+                </button>
+                <button class="sidebar-link" data-tab="pedidos">
+                    <i class="fas fa-shopping-cart"></i> Pedidos
+                </button>
+                <button class="sidebar-link" data-tab="consultas">
+                    <i class="fas fa-comments"></i> Consultas
+                </button>
+                <button class="sidebar-link" data-tab="config">
+                    <i class="fas fa-cog"></i> Configuración
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="admin-info">
+                    <span id="adminName">Admin</span>
+                    <span id="adminRole" class="role-badge">Superadmin</span>
+                </div>
+                <button class="sidebar-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+                <a href="index.html" class="sidebar-link">
+                    <i class="fas fa-arrow-left"></i> Volver a la tienda
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="admin-title" id="pageTitle">Dashboard</h1>
+                <div class="admin-actions">
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleAdminTheme()">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <div class="admin-user">
+                        <span class="user-badge">🔐 Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="tab-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-box"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashProducts">0</span>
+                            <span class="stat-label">Productos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashOrders">0</span>
+                            <span class="stat-label">Pedidos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashConsultas">0</span>
+                            <span class="stat-label">Consultas</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dashRevenue">S/0</span>
+                            <span class="stat-label">Ingresos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-shopping-cart"></i> Últimos Pedidos</h3>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Cliente</th><th>Producto</th><th>Total</th><th>Estado</th></tr>
+                                </thead>
+                                <tbody id="dashOrdersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-comments"></i> Últimas Consultas</h3>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Nombre</th><th>Mensaje</th><th>Fecha</th></tr>
+                                </thead>
+                                <tbody id="dashConsultasTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="margin-top:25px">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Stock Bajo</h3>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Producto</th><th>Stock</th><th>Precio</th></tr>
+                                </thead>
+                                <tbody id="dashStockTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-chart-pie"></i> Resumen de Pedidos</h3>
+                        <div id="ordersChart" class="chart-container">
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="dot pending"></span> Pendientes</span>
+                                <span class="legend-item"><span class="dot preparing"></span> En Preparación</span>
+                                <span class="legend-item"><span class="dot delivered"></span> Entregados</span>
+                            </div>
+                            <div class="chart-bars" id="ordersChartBars"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos Tab -->
+            <div class="tab-content" id="tab-productos">
+                <div class="section-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="productSearch" placeholder="Buscar productos...">
+                    </div>
+                    <button class="btn btn-primary" onclick="openProductForm()">
+                        <i class="fas fa-plus"></i> Nuevo Producto
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th>
+                                <th>Stock</th><th>Destacado</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pedidos Tab -->
+            <div class="tab-content" id="tab-pedidos">
+                <div class="filters admin-filters">
+                    <button class="filter-btn active" data-status="todos">Todos</button>
+                    <button class="filter-btn" data-status="pendiente">Pendientes</button>
+                    <button class="filter-btn" data-status="en_preparacion">En Preparación</button>
+                    <button class="filter-btn" data-status="entregado">Entregados</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Cliente</th><th>Producto</th><th>Cantidad</th>
+                                <th>Total</th><th>Pago</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Consultas Tab -->
+            <div class="tab-content" id="tab-consultas">
+                <div class="filters admin-filters">
+                    <button class="filter-btn active" data-status="todos">Todas</button>
+                    <button class="filter-btn" data-status="nueva">Nuevas</button>
+                    <button class="filter-btn" data-status="atendida">Atendidas</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th><th>Email</th><th>Teléfono</th><th>Mensaje</th>
+                                <th>Estado</th><th>Fecha</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultasTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Config Tab -->
+            <div class="tab-content" id="tab-config">
+                <div class="config-grid">
+                    <div class="config-card">
+                        <h3><i class="fas fa-user-shield"></i> Cambiar Contraseña</h3>
+                        <form id="passwordForm" class="config-form">
+                            <div class="form-group">
+                                <label>Contraseña Actual</label>
+                                <input type="password" id="currentPass" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="newPass" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar Nueva Contraseña</label>
+                                <input type="password" id="confirmPass" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Cambiar Contraseña
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="config-card">
+                        <h3><i class="fas fa-store"></i> Configuración de Tienda</h3>
+                        <form id="storeConfigForm" class="config-form">
+                            <div class="form-group">
+                                <label>Nombre del Sitio</label>
+                                <input type="text" id="configSiteName" name="site_name">
+                            </div>
+                            <div class="form-group">
+                                <label>Número WhatsApp</label>
+                                <input type="text" id="configWhatsApp" name="whatsapp_number">
+                            </div>
+                            <div class="form-group">
+                                <label>Precio Delivery Lima (S/)</label>
+                                <input type="number" id="configDeliveryLima" name="delivery_price_lima">
+                            </div>
+                            <div class="form-group">
+                                <label>Precio Delivery Provincia (S/)</label>
+                                <input type="number" id="configDeliveryProv" name="delivery_price_provincia">
+                            </div>
+                            <div class="form-group">
+                                <label>Código Promoción</label>
+                                <input type="text" id="configPromoCode" name="promo_code">
+                            </div>
+                            <div class="form-group">
+                                <label>% Descuento Promoción</label>
+                                <input type="number" id="configPromoDiscount" name="promo_discount" min="1" max="99">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Configuración
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Producto Form -->
+    <div class="modal" id="productFormModal">
+        <div class="modal-overlay" onclick="closeProductForm()"></div>
+        <div class="modal-content modal-lg">
+            <button class="modal-close" onclick="closeProductForm()">&times;</button>
+            <div class="modal-body">
+                <h2 class="form-title" id="productFormTitle">Nuevo Producto</h2>
+                <form id="productForm" class="consult-form">
+                    <input type="hidden" id="productId" name="id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" name="nombre" required placeholder="Nombre del producto">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select name="categoria" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="figuras">Figuras</option>
+                                <option value="manga">Manga</option>
+                                <option value="merch">Merch</option>
+                                <option value="cosplay">Cosplay</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Precio (S/)</label>
+                            <input type="number" name="precio" step="0.01" min="0" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock</label>
+                            <input type="number" name="stock" min="0" required placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="descripcion" rows="3" required placeholder="Descripción del producto..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>URL de Imagen</label>
+                        <input type="text" name="imagen" placeholder="imagen1.jpg (o URL completa)">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="destacado">
+                            <span>Producto destacado</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit">
+                        <i class="fas fa-save"></i> Guardar Producto
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

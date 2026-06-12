@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ado no Sekai - Tu Mundo Otaku</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!--
+    📁 IMÁGENES: Sube manualmente a tu repositorio:
+        - imagen1.jpg, imagen2.jpg, imagen3.jpg, imagen4.jpg, imagen5.jpg (Galería/Hero)
+        - mascot-waving.png, mascot-pointing.png (Mascota - opcional, usa emojis si no hay)
+        - modal-gift.png, modal-present.png (Modales - opcional, usa emojis si no hay)
+    📁 Las imágenes de productos se cargan desde Supabase Storage o URLs externas.
+    -->
+    <!-- ========================
+         NAVEGACIÓN
+    ======================== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <span class="logo-icon">⚔️</span>
+                <span class="logo-text">Ado no Sekai</span>
+            </a>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="nav-toggle" id="navToggle" aria-label="Menú">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                <li><a href="#productos" class="nav-link">Productos</a></li>
+                <li><a href="#galeria" class="nav-link">Galería</a></li>
+                <li><a href="#proceso" class="nav-link">Proceso</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+                <li><a href="admin.html" class="nav-link nav-admin">🔐 Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ========================
+         HERO / INICIO
+    ======================== -->
+    <section id="inicio" class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-particles" id="heroParticles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">🎌 Tienda Otaku Premium</div>
+            <h1 class="hero-title">
+                <span class="title-line">TU MUNDO.</span>
+                <span class="title-line">TU PASIÓN.</span>
+                <span class="title-line highlight">TU HISTORIA.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Descubre el universo del anime, manga y cultura japonesa.<br>
+                Figuras, merch, cosplay y mucho más en un solo lugar.
+            </p>
+            <div class="hero-actions">
+                <a href="#productos" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Ver Productos
+                </a>
+                <a href="#contacto" class="btn btn-outline">
+                    <i class="fas fa-comments"></i> Consultar
+                </a>
+                <button class="btn btn-gold" id="btnPromo" onclick="showPromoModal()">
+                    <i class="fas fa-gift"></i> Oferta del Día
+                </button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number" id="statProducts">0</span>
+                    <span class="stat-label">Productos</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="statClients">0</span>
+                    <span class="stat-label">Clientes</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="statDeliveries">0</span>
+                    <span class="stat-label">Entregas</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <a href="#productos" class="scroll-indicator">
+                <span>Explorar</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- ========================
+         PRODUCTOS DESTACADOS
+    ======================== -->
+    <section id="productos" class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">🛍️ Catálogo</span>
+                <h2 class="section-title">Productos Destacados</h2>
+                <p class="section-desc">Explora nuestra colección de productos otaku seleccionados</p>
+            </div>
+
+            <!-- Barra de búsqueda -->
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchProducts" placeholder="Buscar productos...">
+                <button class="search-clear" id="searchClear" style="display:none"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="todos">Todos</button>
+                <button class="filter-btn" data-filter="figuras">Figuras</button>
+                <button class="filter-btn" data-filter="manga">Manga</button>
+                <button class="filter-btn" data-filter="merch">Merch</button>
+                <button class="filter-btn" data-filter="cosplay">Cosplay</button>
+            </div>
+
+            <!-- Grid de productos -->
+            <div class="products-grid" id="productsGrid">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Cargando productos desde Supabase...</p>
+                </div>
+            </div>
+
+            <div class="products-footer">
+                <a href="#contacto" class="btn btn-secondary">
+                    <i class="fas fa-plus-circle"></i> ¿Buscas algo específico? Consúltanos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================
+         GALERÍA (Carrusel en index)
+    ======================== -->
+    <section id="galeria" class="gallery-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">📸 Galería</span>
+                <h2 class="section-title">Momentos Ado no Sekai</h2>
+                <p class="section-desc">Un vistazo a nuestro mundo otaku</p>
+            </div>
+
+            <!-- Carrusel en el index -->
+            <div class="gallery-carousel" id="galleryCarousel">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <img src="imagen1.jpg" alt="Imagen 1" loading="lazy">
+                        <div class="slide-caption">
+                            <h3>Evento Anime 2024</h3>
+                            <p>Convención de anime en la ciudad</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="imagen2.jpg" alt="Imagen 2" loading="lazy">
+                        <div class="slide-caption">
+                            <h3>Colección Exclusiva</h3>
+                            <p>Nuevas figuras recién llegadas</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="imagen3.jpg" alt="Imagen 3" loading="lazy">
+                        <div class="slide-caption">
+                            <h3>Cosplay Contest</h3>
+                            <p>Ganadores del concurso mensual</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="imagen4.jpg" alt="Imagen 4" loading="lazy">
+                        <div class="slide-caption">
+                            <h3>Tienda Física</h3>
+                            <p>Nuestro espacio en el centro</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="imagen5.jpg" alt="Imagen 5" loading="lazy">
+                        <div class="slide-caption">
+                            <h3>Unboxing</h3>
+                            <p>Abriendo pedidos con clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Anterior">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Siguiente">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="carousel-dots" id="carouselDots"></div>
+            </div>
+
+            <!-- Link a galería completa -->
+            <div class="gallery-cta">
+                <a href="galeria.html" class="btn btn-primary">
+                    <i class="fas fa-images"></i> Ver Galería Completa
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================
+         DIAGRAMA DE FLUJO (5 Pasos)
+    ======================== -->
+    <section id="proceso" class="process-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">🔄 Proceso</span>
+                <h2 class="section-title">¿Cómo Funciona?</h2>
+                <p class="section-desc">5 simples pasos para obtener tu producto otaku. ¡Haz clic en cada uno!</p>
+            </div>
+
+            <!-- Mascot Anime -->
+            <div class="mascot-container">
+                <div class="mascot-wrapper">
+                    <div class="mascot-img" id="mascotImg">🌸</div>
+                    <div class="mascot-bubble" id="mascotBubble">
+                        <p>¡Hola! 👋 Soy Ado-chan. Te guiaré por estos 5 pasos. ¡Haz clic en cualquiera para comenzar!</p>
+                        <span class="mascot-bubble-arrow"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-flow">
+                <!-- Paso 1: Contacto -->
+                <div class="process-step clickable" data-step="1" onclick="handleProcessStep(1)">
+                    <div class="step-number">1</div>
+                    <div class="step-icon"><i class="fas fa-comment-dots"></i></div>
+                    <h3 class="step-title">Contacto</h3>
+                    <p class="step-desc">Escríbenos por WhatsApp o redes sociales con lo que buscas</p>
+                    <div class="step-action">
+                        <span class="step-btn"><i class="fab fa-whatsapp"></i> Escribir</span>
+                    </div>
+                    <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <!-- Paso 2: Asesoría -->
+                <div class="process-step clickable" data-step="2" onclick="handleProcessStep(2)">
+                    <div class="step-number">2</div>
+                    <div class="step-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3 class="step-title">Asesoría</h3>
+                    <p class="step-desc">Te ayudamos a elegir el producto perfecto para ti</p>
+                    <div class="step-action">
+                        <span class="step-btn"><i class="fas fa-robot"></i> Chat IA</span>
+                    </div>
+                    <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <!-- Paso 3: Pedido -->
+                <div class="process-step clickable" data-step="3" onclick="handleProcessStep(3)">
+                    <div class="step-number">3</div>
+                    <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <h3 class="step-title">Pedido</h3>
+                    <p class="step-desc">Confirmamos tu pedido y método de pago</p>
+                    <div class="step-action">
+                        <span class="step-btn"><i class="fas fa-shopping-cart"></i> Ver Catálogo</span>
+                    </div>
+                    <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <!-- Paso 4: Entrega -->
+                <div class="process-step clickable" data-step="4" onclick="handleProcessStep(4)">
+                    <div class="step-number">4</div>
+                    <div class="step-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <h3 class="step-title">Entrega</h3>
+                    <p class="step-desc">Enviamos o entregamos tu producto en tiempo récord</p>
+                    <div class="step-action">
+                        <span class="step-btn"><i class="fas fa-map-marker-alt"></i> Ver Zonas</span>
+                    </div>
+                    <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <!-- Paso 5: Fidelización -->
+                <div class="process-step clickable" data-step="5" onclick="handleProcessStep(5)">
+                    <div class="step-number">5</div>
+                    <div class="step-icon"><i class="fas fa-heart"></i></div>
+                    <h3 class="step-title">Fidelización</h3>
+                    <p class="step-desc">Únete a nuestra comunidad y obtén beneficios exclusivos</p>
+                    <div class="step-action">
+                        <span class="step-btn"><i class="fas fa-users"></i> Unirse</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de progreso visual -->
+            <div class="process-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-steps">
+                    <span class="progress-step active" data-step="1">Contacto</span>
+                    <span class="progress-step" data-step="2">Asesoría</span>
+                    <span class="progress-step" data-step="3">Pedido</span>
+                    <span class="progress-step" data-step="4">Entrega</span>
+                    <span class="progress-step" data-step="5">Fidelización</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================
+         TESTIMONIOS
+    ======================== -->
+    <section id="testimonios" class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">💬 Testimonios</span>
+                <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+                <p class="section-desc">Experiencias reales de la comunidad otaku</p>
+            </div>
+            <div class="testimonials-grid" id="testimonialsGrid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"La figura de Goku llegó perfecta y en tiempo récord. El empaque fue impecable, ¡totalmente recomendado!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">CR</div>
+                        <div>
+                            <strong>Carlos Ruiz</strong>
+                            <span>Comprador verificado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Me ayudaron a encontrar el manga que buscaba hace meses. El servicio de asesoría es excelente."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">ML</div>
+                        <div>
+                            <strong>María López</strong>
+                            <span>Compradora verificada</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"El cosplay de Demon Slayer superó mis expectativas. La calidad del material es increíble."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">PG</div>
+                        <div>
+                            <strong>Pedro Gómez</strong>
+                            <span>Cosplayer profesional</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================
+         CONTACTO
+    ======================== -->
+    <section id="contacto" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">📞 Contacto</span>
+                <h2 class="section-title">Conecta con Ado no Sekai</h2>
+                <p class="section-desc">Estamos aquí para ayudarte en tu aventura otaku</p>
+            </div>
+
+            <div class="contact-grid">
+                <!-- WhatsApp -->
+                <div class="contact-card whatsapp">
+                    <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+                    <h3>WhatsApp</h3>
+                    <p>Respuesta inmediata para tus consultas</p>
+                    <a href="https://wa.me/51999999999" target="_blank" class="contact-btn" id="btnWhatsApp">
+                        <i class="fab fa-whatsapp"></i> Escribir Ahora
+                    </a>
+                </div>
+
+                <!-- Redes Sociales -->
+                <div class="contact-card social">
+                    <div class="contact-icon"><i class="fas fa-share-alt"></i></div>
+                    <h3>Redes Sociales</h3>
+                    <p>Síguenos para novedades y sorteos</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/adonosekai" target="_blank" class="social-link" aria-label="Facebook" id="btnFacebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/adonosekai" target="_blank" class="social-link" aria-label="Instagram" id="btnInstagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://tiktok.com/@adonosekai" target="_blank" class="social-link" aria-label="TikTok" id="btnTikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://twitter.com/adonosekai" target="_blank" class="social-link" aria-label="Twitter" id="btnTwitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <!-- Tienda Física -->
+                <div class="contact-card store">
+                    <div class="contact-icon"><i class="fas fa-store"></i></div>
+                    <h3>Tienda Física</h3>
+                    <p>Visítanos y vive la experiencia</p>
+                    <div class="store-info">
+                        <p><i class="fas fa-map-marker-alt"></i> Av. Otaku #123, Lima, Perú</p>
+                        <p><i class="fas fa-clock"></i> Lun-Sab: 10am - 8pm</p>
+                    </div>
+                    <a href="https://maps.google.com" target="_blank" class="contact-btn" id="btnMapa">
+                        <i class="fas fa-map"></i> Ver en Mapa
+                    </a>
+                </div>
+            </div>
+
+            <!-- Formulario de consulta -->
+            <div class="consult-form-wrapper">
+                <h3 class="form-title">📝 Envía tu Consulta</h3>
+                <form id="consultaForm" class="consult-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="consultaNombre">Nombre</label>
+                            <input type="text" id="consultaNombre" name="nombre" required placeholder="Tu nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="consultaEmail">Email</label>
+                            <input type="email" id="consultaEmail" name="email" required placeholder="tu@email.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="consultaTelefono">Teléfono / WhatsApp</label>
+                        <input type="tel" id="consultaTelefono" name="telefono" placeholder="+51 999 999 999">
+                    </div>
+                    <div class="form-group">
+                        <label for="consultaMensaje">Mensaje</label>
+                        <textarea id="consultaMensaje" name="mensaje" rows="4" required placeholder="¿Qué producto buscas?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit" id="btnEnviarConsulta">
+                        <i class="fas fa-paper-plane"></i> Enviar Consulta
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================
+         FOOTER
+    ======================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-icon">⚔️</span>
+                        <span class="logo-text">Ado no Sekai</span>
+                    </div>
+                    <p>Tu mundo otaku en un solo lugar. Figuras, manga, merch y cosplay.</p>
+                    <div class="footer-social">
+                        <a href="https://facebook.com/adonosekai" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/adonosekai" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://tiktok.com/@adonosekai" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#galeria">Galería</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                        <li><a href="admin.html">Panel Admin</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#" onclick="showToast('info','Próximamente','Esta sección estará disponible pronto')">Términos y Condiciones</a></li>
+                        <li><a href="#" onclick="showToast('info','Próximamente','Esta sección estará disponible pronto')">Política de Privacidad</a></li>
+                        <li><a href="#" onclick="showToast('info','Próximamente','Esta sección estará disponible pronto')">Política de Envíos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Newsletter Otaku</h4>
+                    <p>Recibe novedades y ofertas exclusivas</p>
+                    <form id="newsletterForm" class="newsletter-form">
+                        <input type="email" placeholder="tu@email.com" required>
+                        <button type="submit" id="btnNewsletter"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Ado no Sekai. Todos los derechos reservados. Hecho con ❤️ para la comunidad otaku.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================
+         MODAL: DETALLE PRODUCTO
+    ======================== -->
+    <div class="modal" id="productModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content modal-scrollable modal-anime">
+            <button class="modal-close" id="modalClose" aria-label="Cerrar">&times;</button>
+            <div class="modal-anime-header">
+                <div class="modal-anime-img">🎁</div>
+                <div class="modal-anime-bubble">
+                    <span>¡Mira este producto! 🎁</span>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ========================
+         MODAL: PROMO DEL DÍA
+    ======================== -->
+    <div class="modal" id="promoModal">
+        <div class="modal-overlay" onclick="closePromoModal()"></div>
+        <div class="modal-content promo-modal-content modal-anime">
+            <button class="modal-close" onclick="closePromoModal()">&times;</button>
+            <div class="modal-anime-header promo-anime-header">
+                <div class="modal-anime-img promo-anime-img">🎌</div>
+                <div class="modal-anime-bubble promo-anime-bubble">
+                    <span>¡Oferta especial para ti! 🎌</span>
+                </div>
+            </div>
+            <div class="modal-body promo-body">
+                <div class="promo-badge">🔥 OFERTA DEL DÍA</div>
+                <h2 class="promo-title">¡20% OFF en Figuras!</h2>
+                <p class="promo-desc">Hoy todos los pedidos de figuras tienen un 20% de descuento. Usa el código:</p>
+                <div class="promo-code" id="promoCode" onclick="copyPromoCode()">
+                    <span>OTAKU20</span>
+                    <i class="fas fa-copy"></i>
+                </div>
+                <p class="promo-hint">Haz clic para copiar el código</p>
+                <a href="#productos" class="btn btn-primary" onclick="closePromoModal()">
+                    <i class="fas fa-shopping-bag"></i> Ver Figuras
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================
+         BOTÓN VOLVER ARRIBA
+    ======================== -->
+    <button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- ========================
+         CHAT FLOTANTE
+    ======================== -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-avatar">⚔️</div>
+                <div class="chat-info">
+                    <strong>Ado no Sekai</strong>
+                    <span class="chat-status"><i class="fas fa-circle"></i> En línea</span>
+                </div>
+                <button class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot">
+                    <div class="chat-bubble">¡Hola! 👋 Bienvenido a Ado no Sekai. ¿En qué puedo ayudarte hoy?</div>
+                    <span class="chat-time">Ahora</span>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+                <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button class="chat-toggle" id="chatToggle" onclick="toggleChat()" aria-label="Chat">
+            <i class="fas fa-comment-dots"></i>
+            <span class="chat-badge" id="chatBadge">1</span>
+        </button>
+    </div>
+
+    <!-- ========================
+         TOAST NOTIFICATIONS
+    ======================== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ========================
+         SCRIPTS
+    ======================== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

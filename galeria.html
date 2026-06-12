@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería - Ado no Sekai</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .gallery-full {
+            padding: 120px 0 60px;
+            background: var(--color-dark);
+            min-height: 100vh;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            border: 2px solid var(--color-gray-800);
+            transition: all var(--transition-normal);
+        }
+        .gallery-item:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        .gallery-item-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 20px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: var(--color-white);
+            transform: translateY(100%);
+            transition: transform var(--transition-normal);
+        }
+        .gallery-item:hover .gallery-item-caption {
+            transform: translateY(0);
+        }
+        .gallery-item-caption h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+        .gallery-item-caption p {
+            font-size: 0.85rem;
+            color: var(--color-gray-400);
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            color: var(--color-gray-400);
+            font-weight: 600;
+            transition: color var(--transition-fast);
+        }
+        .back-btn:hover {
+            color: var(--color-primary-light);
+        }
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--color-gray-800);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--color-gray-800);
+            color: var(--color-white);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+        .lightbox-close:hover {
+            background: var(--color-primary);
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            color: var(--color-white);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(4px);
+        }
+        .lightbox-nav:hover {
+            background: var(--color-primary);
+        }
+        .lightbox-prev { left: 20px; }
+        .lightbox-next { right: 20px; }
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+            .gallery-item-caption {
+                transform: translateY(0);
+                padding: 20px 15px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled" style="background:rgba(10,10,10,0.95);backdrop-filter:blur(20px)">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">⚔️</span>
+                <span class="logo-text">Ado no Sekai</span>
+            </a>
+            <ul class="nav-menu" style="display:flex">
+                <li><a href="index.html" class="nav-link">← Volver a Inicio</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="gallery-full">
+        <div class="container">
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a la tienda</a>
+            <div class="section-header" style="text-align:left;margin-bottom:40px">
+                <span class="section-tag">📸 Galería Completa</span>
+                <h2 class="section-title">Momentos Ado no Sekai</h2>
+                <p class="section-desc">Explora todas nuestras fotos y momentos especiales</p>
+            </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <div class="gallery-item" onclick="openLightbox(0)">
+                    <img src="imagen1.jpg" alt="Imagen 1" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Evento Anime 2024</h3>
+                        <p>Convención de anime en la ciudad</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(1)">
+                    <img src="imagen2.jpg" alt="Imagen 2" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Colección Exclusiva</h3>
+                        <p>Nuevas figuras recién llegadas</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(2)">
+                    <img src="imagen3.jpg" alt="Imagen 3" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Cosplay Contest</h3>
+                        <p>Ganadores del concurso mensual</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(3)">
+                    <img src="imagen4.jpg" alt="Imagen 4" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Tienda Física</h3>
+                        <p>Nuestro espacio en el centro</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(4)">
+                    <img src="imagen5.jpg" alt="Imagen 5" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Unboxing</h3>
+                        <p>Abriendo pedidos con clientes</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(5)">
+                    <img src="imagen1.jpg" alt="Imagen 6" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Exhibición Figuras</h3>
+                        <p>Nuestra vitrina de colección</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(6)">
+                    <img src="imagen2.jpg" alt="Imagen 7" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Manga Corner</h3>
+                        <p>Sección dedicada al manga</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(7)">
+                    <img src="imagen3.jpg" alt="Imagen 8" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Merch Oficial</h3>
+                        <p>Productos oficiales de anime</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(8)">
+                    <img src="imagen4.jpg" alt="Imagen 9" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Workshop Cosplay</h3>
+                        <p>Taller de creación de cosplay</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(9)">
+                    <img src="imagen5.jpg" alt="Imagen 10" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Community Day</h3>
+                        <p>Día de la comunidad otaku</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(10)">
+                    <img src="imagen1.jpg" alt="Imagen 11" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Nuevos Lanzamientos</h3>
+                        <p>Temporada de nuevos productos</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(11)">
+                    <img src="imagen2.jpg" alt="Imagen 12" loading="lazy">
+                    <div class="gallery-item-caption">
+                        <h3>Backstage</h3>
+                        <p>Detrás de cámaras en Ado no Sekai</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <button class="lightbox-nav lightbox-prev" onclick="prevLightbox()" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <img id="lightboxImg" src="" alt="">
+        <button class="lightbox-nav lightbox-next" onclick="nextLightbox()" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <script>
+        const galleryImages = [
+            { src: 'imagen1.jpg', title: 'Evento Anime 2024', desc: 'Convención de anime en la ciudad' },
+            { src: 'imagen2.jpg', title: 'Colección Exclusiva', desc: 'Nuevas figuras recién llegadas' },
+            { src: 'imagen3.jpg', title: 'Cosplay Contest', desc: 'Ganadores del concurso mensual' },
+            { src: 'imagen4.jpg', title: 'Tienda Física', desc: 'Nuestro espacio en el centro' },
+            { src: 'imagen5.jpg', title: 'Unboxing', desc: 'Abriendo pedidos con clientes' },
+            { src: 'imagen1.jpg', title: 'Exhibición Figuras', desc: 'Nuestra vitrina de colección' },
+            { src: 'imagen2.jpg', title: 'Manga Corner', desc: 'Sección dedicada al manga' },
+            { src: 'imagen3.jpg', title: 'Merch Oficial', desc: 'Productos oficiales de anime' },
+            { src: 'imagen4.jpg', title: 'Workshop Cosplay', desc: 'Taller de creación de cosplay' },
+            { src: 'imagen5.jpg', title: 'Community Day', desc: 'Día de la comunidad otaku' },
+            { src: 'imagen1.jpg', title: 'Nuevos Lanzamientos', desc: 'Temporada de nuevos productos' },
+            { src: 'imagen2.jpg', title: 'Backstage', desc: 'Detrás de cámaras en Ado no Sekai' },
+        ];
+
+        let lightboxIndex = 0;
+
+        function openLightbox(index) {
+            lightboxIndex = index;
+            updateLightbox();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateLightbox() {
+            const img = document.getElementById('lightboxImg');
+            img.src = galleryImages[lightboxIndex].src;
+            img.alt = galleryImages[lightboxIndex].title;
+        }
+
+        function nextLightbox() {
+            lightboxIndex = (lightboxIndex + 1) % galleryImages.length;
+            updateLightbox();
+        }
+
+        function prevLightbox() {
+            lightboxIndex = (lightboxIndex - 1 + galleryImages.length) % galleryImages.length;
+            updateLightbox();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextLightbox();
+            if (e.key === 'ArrowLeft') prevLightbox();
+        });
+    </script>
+</body>
+</html>
