@@ -401,9 +401,14 @@ function renderProductsTable() {
         return;
     }
 
-    tbody.innerHTML = allProductos.map(p => `
+    tbody.innerHTML = allProductos.map(p => {
+        const imgUrl = p.imagen && p.imagen.startsWith('http') 
+            ? p.imagen 
+            : 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen';
+        console.log('Producto:', p.nombre, 'Imagen:', imgUrl);
+        return `
         <tr>
-            <td><img src="${p.imagen || 'imagen1.jpg'}" alt="${p.nombre}" class="table-img"></td>
+            <td><img src="${imgUrl}" alt="${p.nombre}" class="table-img" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"></td>
             <td><strong>${p.nombre}</strong></td>
             <td><span class="status-badge status-${p.categoria}">${p.categoria.toUpperCase()}</span></td>
             <td><strong style="color:var(--color-secondary)">S/${p.precio?.toFixed(2) || '0.00'}</strong></td>
@@ -439,9 +444,13 @@ function renderFilteredProducts(productos) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--color-gray-500)">No se encontraron productos</td></tr>';
         return;
     }
-    tbody.innerHTML = productos.map(p => `
+    tbody.innerHTML = productos.map(p => {
+        const imgUrl = p.imagen && p.imagen.startsWith('http') 
+            ? p.imagen 
+            : 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen';
+        return `
         <tr>
-            <td><img src="${p.imagen || 'imagen1.jpg'}" alt="${p.nombre}" class="table-img"></td>
+            <td><img src="${imgUrl}" alt="${p.nombre}" class="table-img" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'"></td>
             <td><strong>${p.nombre}</strong></td>
             <td><span class="status-badge status-${p.categoria}">${p.categoria.toUpperCase()}</span></td>
             <td><strong style="color:var(--color-secondary)">S/${p.precio?.toFixed(2)}</strong></td>
@@ -1521,10 +1530,10 @@ function showToast(type, title, message) {
 // ============================
 function getDemoProducts() {
     return [
-        { id: 1, nombre: 'Figura Goku Ultra Instinct', categoria: 'figuras', descripcion: 'Figura de colección de 30cm', precio: 149.90, stock: 5, imagen: 'imagen1.jpg', destacado: true, created_at: '2024-01-15' },
-        { id: 2, nombre: 'Manga Attack on Titan Vol.1', categoria: 'manga', descripcion: 'Edición en español, tapa dura', precio: 29.90, stock: 20, imagen: 'imagen2.jpg', destacado: true, created_at: '2024-01-14' },
-        { id: 3, nombre: 'Hoodie Naruto Akatsuki', categoria: 'merch', descripcion: 'Polera con capucha estilo Akatsuki', precio: 89.90, stock: 15, imagen: 'imagen3.jpg', destacado: false, created_at: '2024-01-13' },
-        { id: 4, nombre: 'Cosplay Demon Slayer', categoria: 'cosplay', descripcion: 'Traje completo incluyendo espada', precio: 199.90, stock: 3, imagen: 'imagen4.jpg', destacado: true, created_at: '2024-01-12' },
+        { id: 1, nombre: 'Figura Goku Ultra Instinct', categoria: 'figuras', descripcion: 'Figura de colección de 30cm', precio: 149.90, stock: 5, imagen: '', destacado: true, created_at: '2024-01-15' },
+        { id: 2, nombre: 'Manga Attack on Titan Vol.1', categoria: 'manga', descripcion: 'Edición en español, tapa dura', precio: 29.90, stock: 20, imagen: '', destacado: true, created_at: '2024-01-14' },
+        { id: 3, nombre: 'Hoodie Naruto Akatsuki', categoria: 'merch', descripcion: 'Polera con capucha estilo Akatsuki', precio: 89.90, stock: 15, imagen: '', destacado: false, created_at: '2024-01-13' },
+        { id: 4, nombre: 'Cosplay Demon Slayer', categoria: 'cosplay', descripcion: 'Traje completo incluyendo espada', precio: 199.90, stock: 3, imagen: '', destacado: true, created_at: '2024-01-12' },
     ];
 }
 
