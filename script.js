@@ -317,13 +317,18 @@ function renderProducts() {
         grid.innerHTML = `<div class="loading-state"><p style="font-size:3rem">🔍</p><p>${searchQuery ? 'No se encontraron productos para "' + searchQuery + '"' : 'No hay productos'}</p>${searchQuery ? '<button class="btn btn-secondary" onclick="clearSearch()" style="margin-top:15px"><i class="fas fa-times"></i> Limpiar</button>' : ''}</div>`;
         return;
     }
-    grid.innerHTML = filtered.map(p => `
+    grid.innerHTML = filtered.map(p => {
+        // Usar imagen de Supabase Storage o fallback
+        const imgUrl = p.imagen && p.imagen.startsWith('http') 
+            ? p.imagen 
+            : (p.imagen || 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen');
+        return `
         <div class="product-card" data-id="${p.id}">
             <div class="product-image">
-                <img src="${p.imagen || 'imagen1.jpg'}" alt="${p.nombre}" loading="lazy">
+                <img src="${imgUrl}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'">
                 ${p.destacado ? '<span class="product-badge">🔥 Destacado</span>' : ''}
                 ${p.stock <= 3 ? '<span class="product-badge sale">⚡ Últimos</span>' : ''}
-            </div>
+            </div>`
             <div class="product-info">
                 <span class="product-category">${p.categoria.toUpperCase()}</span>
                 <h3 class="product-name">${p.nombre}</h3>
@@ -355,7 +360,7 @@ window.openProductModal = function(productId) {
     const modal = document.getElementById('productModal');
     const body = document.getElementById('modalBody');
     body.innerHTML = `
-        <img class="modal-product-image" src="${p.imagen || 'imagen1.jpg'}" alt="${p.nombre}">
+        <img class="modal-product-image" src="${p.imagen && p.imagen.startsWith('http') ? p.imagen : (p.imagen || 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen')}" alt="${p.nombre}" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'">
         <div class="modal-product-info">
             <span class="modal-product-category">${p.categoria.toUpperCase()}</span>
             <h2 class="modal-product-name">${p.nombre}</h2>
