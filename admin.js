@@ -682,13 +682,21 @@ function initProductForm() {
         const formData = new FormData(form);
         const id = document.getElementById('productId').value;
 
+        // Obtener URL de imagen subida o existente
+        const imagenUrl = document.getElementById('imagenUrlHidden').value || 
+                           document.getElementById('imagePreview')?.src || 
+                           currentUploadedImageUrl || 
+                           'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen';
+
+        console.log('URL de imagen a guardar:', imagenUrl);
+
         const producto = {
             nombre: formData.get('nombre'),
             categoria: formData.get('categoria'),
             precio: parseFloat(formData.get('precio')),
             stock: parseInt(formData.get('stock')),
             descripcion: formData.get('descripcion'),
-            imagen: document.getElementById('imagenUrlHidden').value || formData.get('imagen') || 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen',
+            imagen: imagenUrl,
             destacado: formData.get('destacado') === 'on',
             updated_at: new Date().toISOString()
         };
