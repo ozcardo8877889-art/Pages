@@ -292,14 +292,14 @@ async function initProducts() {
 
 function getDemoProducts() {
     return [
-        { id: 1, nombre: 'Figura Goku Ultra Instinct', categoria: 'figuras', descripcion: 'Figura de colección de 30cm con base incluida y efectos de energía', precio: 149.90, imagen: 'imagen1.jpg', stock: 5, destacado: true },
-        { id: 2, nombre: 'Manga Attack on Titan Vol.1', categoria: 'manga', descripcion: 'Edición en español, tapa dura, 200 páginas a color', precio: 29.90, imagen: 'imagen2.jpg', stock: 20, destacado: true },
-        { id: 3, nombre: 'Hoodie Naruto Akatsuki', categoria: 'merch', descripcion: 'Polera con capucha estilo Akatsuki, tallas S-XXL, 100% algodón', precio: 89.90, imagen: 'imagen3.jpg', stock: 15, destacado: false },
-        { id: 4, nombre: 'Cosplay Demon Slayer - Tanjiro', categoria: 'cosplay', descripcion: 'Traje completo incluyendo espada Nichirin y máscara Hanafuda', precio: 199.90, imagen: 'imagen4.jpg', stock: 3, destacado: true },
-        { id: 5, nombre: 'Llaveros Set One Piece', categoria: 'merch', descripcion: 'Set de 5 llaveros de personajes principales: Luffy, Zoro, Sanji, Nami, Chopper', precio: 24.90, imagen: 'imagen5.jpg', stock: 50, destacado: false },
-        { id: 6, nombre: 'Figura Levi Ackerman', categoria: 'figuras', descripcion: 'Figura articulada de 25cm con accesorios intercambiables y base 3D', precio: 179.90, imagen: 'imagen1.jpg', stock: 2, destacado: true },
-        { id: 7, nombre: 'Manga Jujutsu Kaisen Vol.15', categoria: 'manga', descripcion: 'Último volumen disponible, edición especial con póster', precio: 34.90, imagen: 'imagen2.jpg', stock: 8, destacado: false },
-        { id: 8, nombre: 'Taza Genshin Impact', categoria: 'merch', descripcion: 'Taza cerámica de 350ml con diseño de Paimon, apta para microondas', precio: 39.90, imagen: 'imagen3.jpg', stock: 25, destacado: false },
+        { id: 1, nombre: 'Figura Goku Ultra Instinct', categoria: 'figuras', descripcion: 'Figura de colección de 30cm con base incluida y efectos de energía', precio: 149.90, imagen: '', stock: 5, destacado: true },
+        { id: 2, nombre: 'Manga Attack on Titan Vol.1', categoria: 'manga', descripcion: 'Edición en español, tapa dura, 200 páginas a color', precio: 29.90, imagen: '', stock: 20, destacado: true },
+        { id: 3, nombre: 'Hoodie Naruto Akatsuki', categoria: 'merch', descripcion: 'Polera con capucha estilo Akatsuki, tallas S-XXL, 100% algodón', precio: 89.90, imagen: '', stock: 15, destacado: false },
+        { id: 4, nombre: 'Cosplay Demon Slayer - Tanjiro', categoria: 'cosplay', descripcion: 'Traje completo incluyendo espada Nichirin y máscara Hanafuda', precio: 199.90, imagen: '', stock: 3, destacado: true },
+        { id: 5, nombre: 'Llaveros Set One Piece', categoria: 'merch', descripcion: 'Set de 5 llaveros de personajes principales', precio: 24.90, imagen: '', stock: 50, destacado: false },
+        { id: 6, nombre: 'Figura Levi Ackerman', categoria: 'figuras', descripcion: 'Figura articulada de 25cm con accesorios intercambiables', precio: 179.90, imagen: '', stock: 2, destacado: true },
+        { id: 7, nombre: 'Manga Jujutsu Kaisen Vol.15', categoria: 'manga', descripcion: 'Último volumen disponible, edición especial con póster', precio: 34.90, imagen: '', stock: 8, destacado: false },
+        { id: 8, nombre: 'Taza Genshin Impact', categoria: 'merch', descripcion: 'Taza cerámica de 350ml con diseño de Paimon', precio: 39.90, imagen: '', stock: 25, destacado: false },
     ];
 }
 
@@ -318,13 +318,14 @@ function renderProducts() {
         return;
     }
     grid.innerHTML = filtered.map(p => {
+        // Usar imagen de la base de datos o dejar vacío
         const imgUrl = p.imagen && p.imagen.startsWith('http') 
             ? p.imagen 
-            : (p.imagen || 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen');
+            : '';
         return `
         <div class="product-card" data-id="${p.id}">
             <div class="product-image">
-                <img src="${imgUrl}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'">
+                ${imgUrl ? `<img src="${imgUrl}" alt="${p.nombre}" loading="lazy" onerror="this.style.display='none'">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--color-gray-600);font-size:3rem;">📦</div>'}
                 ${p.destacado ? '<span class="product-badge">🔥 Destacado</span>' : ''}
                 ${p.stock <= 3 ? '<span class="product-badge sale">⚡ Últimos</span>' : ''}
             </div>
