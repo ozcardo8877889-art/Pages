@@ -405,9 +405,10 @@ function renderProductsTable() {
         const imgUrl = p.imagen && p.imagen.startsWith('http') 
             ? p.imagen 
             : 'https://placehold.co/400x400/1a1a1a/E63946?text=Sin+Imagen';
+        console.log('Producto:', p.nombre, 'Imagen:', imgUrl);
         return `
         <tr>
-            <td><img src="${imgUrl}" alt="${p.nombre}" class="table-img" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'"></td>
+            <td><img src="${imgUrl}" alt="${p.nombre}" class="table-img" onerror="this.src='https://placehold.co/400x400/1a1a1a/E63946?text=Error+Imagen'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"></td>
             <td><strong>${p.nombre}</strong></td>
             <td><span class="status-badge status-${p.categoria}">${p.categoria.toUpperCase()}</span></td>
             <td><strong style="color:var(--color-secondary)">S/${p.precio?.toFixed(2) || '0.00'}</strong></td>
