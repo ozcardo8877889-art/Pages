@@ -488,6 +488,204 @@ function closeProductForm() {
     document.body.style.overflow = '';
 }
 
+
+// ============================
+// SUBIR IMÁGENES A SUPABASE STORAGE
+// ============================
+
+let currentUploadedImageUrl = null;
+
+function handleImageUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        showToast('error', 'Error', 'Solo se permiten imágenes (JPG, PNG, GIF, WebP)');
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('error', 'Error', 'La imagen no puede superar los 5MB');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const placeholder = document.getElementById('imagePlaceholder');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const preview = document.getElementById('imagePreview');
+        const progress = document.getElementById('uploadProgress');
+
+        if (placeholder) placeholder.style.display = 'none';
+        if (previewContainer) previewContainer.style.display = 'block';
+        if (preview) preview.src = e.target.result;
+        if (progress) progress.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+
+    uploadImageToSupabase(file);
+}
+
+async function uploadImageToSupabase(file) {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    try {
+        if (!supabase) {
+            throw new Error('Supabase no está conectado');
+        }
+
+        // Verificar/crear bucket
+        try {
+            const { data: buckets } = await supabase.storage.listBuckets();
+            const bucketExists = buckets && buckets.some(b => b.name === 'imagenes');
+
+            if (!bucketExists) {
+                showToast('info', 'Creando bucket...', 'Creando bucket de imágenes');
+                await supabase.storage.createBucket('imagenes', {
+                    public: true,
+                    fileSizeLimit: 5242880
+                });
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        } catch(e) {
+            console.log('Bucket check:', e);
+        }
+
+        const timestamp = Date.now();
+        const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const filePath = `productos/${timestamp}_${safeName}`;
+
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 10;
+            if (progress > 90) progress = 90;
+            if (progressBar) progressBar.style.width = progress + '%';
+        }, 200);
+
+        const { data, error } = await supabase
+            .storage
+            .from('imagenes')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+
+        clearInterval(progressInterval);
+
+        if (error) throw error;
+
+        const { data: urlData } = supabase.storage.from('imagenes').getPublicUrl(filePath);
+        const publicUrl = urlData.publicUrl;
+
+        const hiddenInput = document.getElementById('imagenUrlHidden');
+        if (hiddenInput) hiddenInput.value = publicUrl;
+        currentUploadedImageUrl = publicUrl;
+
+        if (progressBar) progressBar.style.width = '100%';
+        if (progressText) progressText.textContent = '¡Subido!';
+
+        showToast('success', 'Imagen subida', 'Guardada en Supabase Storage');
+
+        setTimeout(() => {
+            const progressEl = document.getElementById('uploadProgress');
+            if (progressEl) progressEl.style.display = 'none';
+        }, 1500);
+
+    } catch (error) {
+        console.error('Error:', error);
+        if (progressText) progressText.textContent = 'Error: ' + error.message;
+        if (progressBar) {
+            progressBar.style.width = '100%';
+            progressBar.style.background = '#E63946';
+        }
+        showToast('error', 'Error', error.message);
+        setTimeout(() => {
+            const progressEl = document.getElementById('uploadProgress');
+            if (progressEl) progressEl.style.display = 'none';
+        }, 4000);
+    }
+}
+
+function removeUploadedImage() {
+    const fileInput = document.getElementById('productImageInput');
+    const hiddenInput = document.getElementById('imagenUrlHidden');
+    const preview = document.getElementById('imagePreview');
+    const placeholder = document.getElementById('imagePlaceholder');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const progressEl = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    if (fileInput) fileInput.value = '';
+    if (hiddenInput) hiddenInput.value = '';
+    if (preview) preview.src = '';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (previewContainer) previewContainer.style.display = 'none';
+    if (progressEl) progressEl.style.display = 'none';
+    if (progressBar) {
+        progressBar.style.width = '0%';
+        progressBar.style.background = '';
+    }
+    if (progressText) progressText.textContent = 'Subiendo...';
+    currentUploadedImageUrl = null;
+}
+
+function initImageDragDrop() {
+    const uploadArea = document.getElementById('imageUploadArea');
+    if (!uploadArea) return;
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.add('drag-over');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.remove('drag-over');
+        }, false);
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const fileInput = document.getElementById('productImageInput');
+            if (fileInput) {
+                fileInput.files = files;
+                handleImageUpload(fileInput);
+            }
+        }
+    }, false);
+}
+
+// Guardar referencia original
+const _originalOpenProductForm = openProductForm;
+window.openProductForm = function(producto = null) {
+    removeUploadedImage();
+    _originalOpenProductForm(producto);
+    if (producto && producto.imagen) {
+        const placeholder = document.getElementById('imagePlaceholder');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const preview = document.getElementById('imagePreview');
+        const hiddenInput = document.getElementById('imagenUrlHidden');
+
+        if (placeholder) placeholder.style.display = 'none';
+        if (previewContainer) previewContainer.style.display = 'block';
+        if (preview) preview.src = producto.imagen;
+        if (hiddenInput) hiddenInput.value = producto.imagen;
+        currentUploadedImageUrl = producto.imagen;
+    }
+    setTimeout(initImageDragDrop, 100);
+};
+
 function initProductForm() {
     const form = document.getElementById('productForm');
     if (!form) return;
